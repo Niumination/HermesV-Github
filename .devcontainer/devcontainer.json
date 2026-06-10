@@ -1,0 +1,20 @@
+{
+  "name": "HermesV-Github",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "postAttachCommand": "bash /home/codespace/Hermes-USB-Portable/scripts/auto-start.sh",
+  "forwardPorts": [8644],
+  "portsAttributes": {
+    "8644": {
+      "label": "Hermes Gateway (Webhook)",
+      "onAutoForward": "notify"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "GitHub.copilot"
+      ]
+    }
+  }
+}

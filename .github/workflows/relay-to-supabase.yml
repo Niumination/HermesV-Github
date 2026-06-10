@@ -1,0 +1,38 @@
+name: Relay Webhook ke Supabase
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, closed, reopened]
+  issues:
+    types: [opened, closed, reopened]
+
+jobs:
+  relay:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kirim event ke Supabase
+        run: |
+          # Build JSON payload menggunakan GitHub context
+          cat << EOF > /tmp/payload.json
+          {
+            "event_type": "${EVENT}",
+            "repository": "${REPO}",
+            "payload": ${PAYLOAD},
+            "status": "pending"
+          }
+          EOF
+
+          curl -s -X POST "$URL/rest/v1/webhook_queue" \
+            -H "apikey: $KEY" \
+            -H "Authorization: Bearer *** \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d @/tmp/payload.json
+        env:
+          URL: ${{ secrets.SUPABASE_URL }}
+          KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          EVENT: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          PAYLOAD: ${{ toJSON(github.event) }}
