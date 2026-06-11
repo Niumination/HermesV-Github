@@ -26,7 +26,7 @@ jobs:
 
           curl -s -X POST "$URL/rest/v1/webhook_queue" \
             -H "apikey: $KEY" \
-            -H "Authorization: Bearer *** \
+            -H "Authorization: Bearer $KEY" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             -d @/tmp/payload.json
