@@ -1,7 +1,7 @@
 {
   "name": "HermesV-Github",
   "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "postAttachCommand": "bash /home/codespace/Hermes-USB-Portable/scripts/auto-start.sh",
+  "postStartCommand": "bash /home/codespace/Hermes-USB-Portable/scripts/auto-start.sh",
   "forwardPorts": [8644],
   "portsAttributes": {
     "8644": {
