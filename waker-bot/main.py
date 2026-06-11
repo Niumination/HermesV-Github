@@ -21,45 +21,63 @@ GH_HEADERS = {
     "User-Agent": "HermesWakerBot/1.0",
 }
 
+
 def tg_send(chat_id, text):
     """Kirim pesan via Telegram API."""
-    httpx.post(f"{TG_API}/sendMessage", json={
-        "chat_id": chat_id,
-        "text": text,
-        "parse_mode": "Markdown",
-    }, timeout=10)
+    try:
+        httpx.post(f"{TG_API}/sendMessage", json={
+            "chat_id": chat_id,
+            "text": text,
+            "parse_mode": "Markdown",
+        }, timeout=10)
+    except Exception:
+        pass
+
 
 def codespace_state():
     """Cek status codespace."""
-    r = httpx.get(
-        f"https://api.github.com/user/codespaces/{CODESPACE_NAME}",
-        headers=GH_HEADERS, timeout=10,
-    )
-    return r.json().get("state", "unknown") if r.status_code == 200 else None
+    try:
+        r = httpx.get(
+            f"https://api.github.com/user/codespaces/{CODESPACE_NAME}",
+            headers=GH_HEADERS, timeout=10,
+        )
+        return r.json().get("state", "unknown") if r.status_code == 200 else None
+    except Exception:
+        return None
+
 
 def codespace_start():
     """Start codespace."""
-    r = httpx.post(
-        f"https://api.github.com/user/codespaces/{CODESPACE_NAME}/start",
-        headers=GH_HEADERS, timeout=30,
-    )
-    return r.status_code == 202
+    try:
+        r = httpx.post(
+            f"https://api.github.com/user/codespaces/{CODESPACE_NAME}/start",
+            headers=GH_HEADERS, timeout=30,
+        )
+        return r.status_code in (200, 202)
+    except Exception:
+        return False
+
 
 def codespace_stop():
     """Stop codespace."""
-    r = httpx.post(
-        f"https://api.github.com/user/codespaces/{CODESPACE_NAME}/stop",
-        headers=GH_HEADERS, timeout=30,
-    )
-    return r.status_code == 202
+    try:
+        r = httpx.post(
+            f"https://api.github.com/user/codespaces/{CODESPACE_NAME}/stop",
+            headers=GH_HEADERS, timeout=30,
+        )
+        return r.status_code in (200, 202)
+    except Exception:
+        return False
+
 
 # ── Route: Health Check ──
 @app.route("/health")
 def health():
     return "alive", 200
 
+
 # ── Route: Telegram Webhook ──
-@app.route(f"/webhook", methods=["POST"])
+@app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.get_json()
     if not data or "message" not in data:
